@@ -326,6 +326,9 @@ function Index() {
                 ) : (
                   <p className="mt-2 text-lg font-bold">{c.v}</p>
                 )}
+                {"note" in c && c.note && (
+                  <p className="mt-2 font-mono text-xs text-muted-foreground">{c.note}</p>
+                )}
               </div>
             </Reveal>
           ))}
