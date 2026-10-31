@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useHydrated } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 const title = "Felix Menchero — Estimator & Quantity Surveyor";
@@ -14,6 +14,12 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: desc },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+    ],
+    scripts: [
+      {
+        children:
+          "try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');}catch(e){}",
+      },
     ],
   }),
   component: Index,
