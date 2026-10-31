@@ -177,7 +177,8 @@ function Index() {
       </header>
 
       <section id="top" className="blueprint-grid border-b">
-        <div className="mx-auto max-w-6xl px-6 py-24 md:py-36">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-24 md:grid-cols-[1fr_auto] md:py-36">
+          <div>
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
             Civil Engineer · Lucena City, PH
           </p>
