@@ -1,5 +1,6 @@
 import { createFileRoute, useHydrated } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import headshot from "@/assets/felix-headshot.png.asset.json";
 
 const title = "Felix Menchero — Estimator & Quantity Surveyor";
 const desc =
@@ -307,7 +308,7 @@ function Index() {
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {[
             { k: "Email", v: "flxmnchr@gmail.com", h: "mailto:flxmnchr@gmail.com" },
-            { k: "Phone", v: "+63 935 209 3565", h: "tel:+639352093565" },
+            { k: "Phone", v: "+63 935 209 3565", h: "tel:+639352093565", note: "Also on Telegram, Viber & WhatsApp" },
             { k: "Location", v: "Lucena City, Philippines" },
           ].map((c, i) => (
             <Reveal key={c.k} delay={i * 80}>
