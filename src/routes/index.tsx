@@ -1,5 +1,6 @@
 import { createFileRoute, useHydrated } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import headshot from "@/assets/felix-headshot.png.asset.json";
 
 const title = "Felix Menchero — Estimator & Quantity Surveyor";
 const desc =
@@ -176,7 +177,8 @@ function Index() {
       </header>
 
       <section id="top" className="blueprint-grid border-b">
-        <div className="mx-auto max-w-6xl px-6 py-24 md:py-36">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-24 md:grid-cols-[1fr_auto] md:py-36">
+          <div>
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
             Civil Engineer · Lucena City, PH
           </p>
@@ -202,6 +204,12 @@ function Index() {
               <span key={s} className="rounded border bg-card px-3 py-1 font-mono text-xs">{s}</span>
             ))}
           </div>
+          </div>
+          <img
+            src={headshot.url}
+            alt="Felix Nathaniel Menchero"
+            className="mx-auto w-56 rounded border-2 border-foreground/20 object-cover shadow-lg md:w-80"
+          />
         </div>
       </section>
 
@@ -307,7 +315,7 @@ function Index() {
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {[
             { k: "Email", v: "flxmnchr@gmail.com", h: "mailto:flxmnchr@gmail.com" },
-            { k: "Phone", v: "+63 935 209 3565", h: "tel:+639352093565" },
+            { k: "Phone", v: "+63 935 209 3565", h: "tel:+639352093565", note: "Also on Telegram, Viber & WhatsApp" },
             { k: "Location", v: "Lucena City, Philippines" },
           ].map((c, i) => (
             <Reveal key={c.k} delay={i * 80}>
@@ -317,6 +325,9 @@ function Index() {
                   <a href={c.h} className="mt-2 block text-lg font-bold transition-colors hover:text-primary">{c.v}</a>
                 ) : (
                   <p className="mt-2 text-lg font-bold">{c.v}</p>
+                )}
+                {"note" in c && c.note && (
+                  <p className="mt-2 font-mono text-xs text-muted-foreground">{c.note}</p>
                 )}
               </div>
             </Reveal>
