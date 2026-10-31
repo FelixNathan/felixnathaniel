@@ -204,6 +204,12 @@ function Index() {
               <span key={s} className="rounded border bg-card px-3 py-1 font-mono text-xs">{s}</span>
             ))}
           </div>
+          </div>
+          <img
+            src={headshot.url}
+            alt="Felix Nathaniel Menchero"
+            className="mx-auto w-56 rounded border-2 border-foreground/20 object-cover shadow-lg md:w-80"
+          />
         </div>
       </section>
 
