@@ -87,6 +87,40 @@ function Reveal({ children, className = "", delay = 0 }: { children: ReactNode; 
   );
 }
 
+/* Dark / light mode toggle. The choice is saved and restored on reload. */
+function ThemeToggle() {
+  const hydrated = useHydrated();
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    const stored = localStorage.getItem("theme");
+    const initial: "light" | "dark" =
+      stored === "dark" || (!stored && window.matchMedia("(prefers-color-scheme: dark)").matches)
+        ? "dark"
+        : "light";
+    setTheme(initial);
+    document.documentElement.classList.toggle("dark", initial === "dark");
+  }, []);
+
+  const toggle = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    document.documentElement.classList.toggle("dark", next === "dark");
+    localStorage.setItem("theme", next);
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+      className="rounded border px-3 py-1.5 font-mono text-xs uppercase tracking-widest transition-transform active:scale-95"
+    >
+      {hydrated ? (theme === "dark" ? "☀ Light" : "☾ Dark") : "☾ Dark"}
+    </button>
+  );
+}
+
 function Index() {
   const [progress, setProgress] = useState(0);
 
@@ -132,6 +166,7 @@ function Index() {
               </a>
             ))}
           </nav>
+          <ThemeToggle />
         </div>
         <div
           className="absolute inset-x-0 bottom-0 h-0.5 origin-left bg-primary"
