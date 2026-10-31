@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 const title = "Felix Menchero — Estimator & Quantity Surveyor";
 const desc =
@@ -53,22 +54,83 @@ function Label({ n, children }: { n: string; children: string }) {
   );
 }
 
+/* Fades content in as it scrolls into view. */
+function Reveal({ children, className = "", delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add("is-visible");
+          io.disconnect();
+        }
+      },
+      { threshold: 0.12 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className={`reveal ${className}`} style={delay ? { transitionDelay: `${delay}ms` } : undefined}>
+      {children}
+    </div>
+  );
+}
+
 function Index() {
+  const [progress, setProgress] = useState(0);
+
+  /* Scroll progress bar */
+  useEffect(() => {
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(max > 0 ? Math.min(1, window.scrollY / max) : 0);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  /* Click burst effect */
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      const dot = document.createElement("span");
+      dot.className = "click-burst";
+      const size = 56;
+      dot.style.left = `${e.clientX - size / 2}px`;
+      dot.style.top = `${e.clientY - size / 2}px`;
+      dot.style.width = `${size}px`;
+      dot.style.height = `${size}px`;
+      document.body.appendChild(dot);
+      window.setTimeout(() => dot.remove(), 600);
+    };
+    window.addEventListener("click", onClick);
+    return () => window.removeEventListener("click", onClick);
+  }, []);
+
   return (
     <div className="min-h-screen font-sans">
       <header className="sticky top-0 z-50 border-b bg-background/85 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <a href="#top" className="font-display text-xl font-black tracking-tight">
+          <a href="#top" className="font-display text-xl font-black tracking-tight transition-transform active:scale-95">
             FELIX<span className="text-accent">.</span>MENCHERO
           </a>
           <nav className="hidden gap-6 font-mono text-xs uppercase tracking-widest md:flex">
             {nav.map((n) => (
-              <a key={n} href={`#${n}`} className="text-muted-foreground transition-colors hover:text-primary">
+              <a key={n} href={`#${n}`} className="text-muted-foreground transition-all hover:text-primary active:scale-95">
                 {n}
               </a>
             ))}
           </nav>
         </div>
+        <div
+          className="absolute inset-x-0 bottom-0 h-0.5 origin-left bg-primary"
+          style={{ transform: `scaleX(${progress})` }}
+        />
       </header>
 
       <section id="top" className="blueprint-grid border-b">
@@ -86,10 +148,10 @@ function Index() {
             accurate, competitive cost proposals.
           </p>
           <div className="mt-10 flex flex-wrap gap-3">
-            <a href="#works" className="rounded bg-primary px-6 py-3 font-medium text-primary-foreground hover:opacity-90">
+            <a href="#works" className="rounded bg-primary px-6 py-3 font-medium text-primary-foreground transition-all hover:opacity-90 active:scale-95">
               View my work
             </a>
-            <a href="#contact" className="rounded border border-foreground px-6 py-3 font-medium hover:bg-foreground hover:text-background">
+            <a href="#contact" className="rounded border border-foreground px-6 py-3 font-medium transition-all hover:bg-foreground hover:text-background active:scale-95">
               Get in touch
             </a>
           </div>
@@ -102,40 +164,48 @@ function Index() {
       </section>
 
       <section id="services" className="mx-auto max-w-6xl px-6 py-24">
-        <Label n="01">Services</Label>
-        <h2 className="mt-3 font-display text-4xl font-black md:text-5xl">What I do</h2>
+        <Reveal>
+          <Label n="01">Services</Label>
+          <h2 className="mt-3 font-display text-4xl font-black md:text-5xl">What I do</h2>
+        </Reveal>
         <div className="mt-12 grid gap-px overflow-hidden rounded border bg-border md:grid-cols-2">
-          {services.map((s) => (
-            <div key={s.n} className="bg-card p-8 transition-colors hover:bg-secondary">
-              <span className="font-mono text-sm text-accent">{s.n}</span>
-              <h3 className="mt-4 text-2xl font-bold">{s.t}</h3>
-              <p className="mt-2 text-muted-foreground">{s.d}</p>
-            </div>
+          {services.map((s, i) => (
+            <Reveal key={s.n} delay={i * 80}>
+              <div className="h-full bg-card p-8 transition-all duration-300 hover:bg-secondary active:scale-[0.98]">
+                <span className="font-mono text-sm text-accent">{s.n}</span>
+                <h3 className="mt-4 text-2xl font-bold">{s.t}</h3>
+                <p className="mt-2 text-muted-foreground">{s.d}</p>
+              </div>
+            </Reveal>
           ))}
         </div>
       </section>
 
       <section id="experience" className="border-y bg-secondary">
         <div className="mx-auto max-w-6xl px-6 py-24">
-          <Label n="02">Work Experience</Label>
-          <h2 className="mt-3 font-display text-4xl font-black md:text-5xl">Where I've worked</h2>
+          <Reveal>
+            <Label n="02">Work Experience</Label>
+            <h2 className="mt-3 font-display text-4xl font-black md:text-5xl">Where I've worked</h2>
+          </Reveal>
           <div className="mt-12 divide-y border-y border-foreground/20">
             {jobs.map((j) => (
-              <div key={j.c} className="grid gap-4 py-8 md:grid-cols-[1fr_2fr]">
-                <div>
-                  <p className="font-mono text-xs text-muted-foreground">{j.p}</p>
-                  <p className="mt-1 font-mono text-xs text-muted-foreground">{j.l}</p>
+              <Reveal key={j.c}>
+                <div className="grid gap-4 py-8 md:grid-cols-[1fr_2fr]">
+                  <div>
+                    <p className="font-mono text-xs text-muted-foreground">{j.p}</p>
+                    <p className="mt-1 font-mono text-xs text-muted-foreground">{j.l}</p>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold">{j.r}</h3>
+                    <p className="text-primary">{j.c}</p>
+                    <ul className="mt-4 space-y-2 text-muted-foreground">
+                      {j.b.map((b) => (
+                        <li key={b} className="flex gap-3"><span className="text-accent">▪</span>{b}</li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-2xl font-bold">{j.r}</h3>
-                  <p className="text-primary">{j.c}</p>
-                  <ul className="mt-4 space-y-2 text-muted-foreground">
-                    {j.b.map((b) => (
-                      <li key={b} className="flex gap-3"><span className="text-accent">▪</span>{b}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+              </Reveal>
             ))}
           </div>
           <p className="mt-8 font-mono text-sm text-muted-foreground">
@@ -145,57 +215,69 @@ function Index() {
       </section>
 
       <section id="works" className="mx-auto max-w-6xl px-6 py-24">
-        <Label n="03">Previous Works</Label>
-        <h2 className="mt-3 font-display text-4xl font-black md:text-5xl">Selected projects</h2>
+        <Reveal>
+          <Label n="03">Previous Works</Label>
+          <h2 className="mt-3 font-display text-4xl font-black md:text-5xl">Selected projects</h2>
+        </Reveal>
         <div className="mt-12 grid gap-6 md:grid-cols-2">
-          {works.map((w) => (
-            <article key={w.t} className="blueprint-grid flex flex-col rounded border bg-card p-8">
-              <p className="font-mono text-xs text-muted-foreground">{w.p}</p>
-              <h3 className="mt-3 text-2xl font-bold">{w.t}</h3>
-              <p className="mt-4 flex-1 text-muted-foreground">{w.d}</p>
-              <div className="mt-8 border-t pt-4">
-                <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Estimate value</p>
-                <p className="font-display text-4xl font-black text-primary">{w.v}</p>
-              </div>
-            </article>
+          {works.map((w, i) => (
+            <Reveal key={w.t} delay={i * 120}>
+              <article className="blueprint-grid flex h-full flex-col rounded border bg-card p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-[0.98]">
+                <p className="font-mono text-xs text-muted-foreground">{w.p}</p>
+                <h3 className="mt-3 text-2xl font-bold">{w.t}</h3>
+                <p className="mt-4 flex-1 text-muted-foreground">{w.d}</p>
+                <div className="mt-8 border-t pt-4">
+                  <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Estimate value</p>
+                  <p className="font-display text-4xl font-black text-primary">{w.v}</p>
+                </div>
+              </article>
+            </Reveal>
           ))}
         </div>
       </section>
 
       <section id="testimonials" className="bg-foreground text-background">
         <div className="mx-auto max-w-6xl px-6 py-24">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent">04 / Testimonials</p>
-          <h2 className="mt-3 font-display text-4xl font-black md:text-5xl">Kind words</h2>
+          <Reveal>
+            <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent">04 / Testimonials</p>
+            <h2 className="mt-3 font-display text-4xl font-black md:text-5xl">Kind words</h2>
+          </Reveal>
           <div className="mt-12 grid gap-10 md:grid-cols-2">
-            {testimonials.map((t) => (
-              <figure key={t.c} className="border-l-2 border-accent pl-6">
-                <blockquote className="text-xl leading-relaxed">“{t.q}”</blockquote>
-                <figcaption className="mt-4 font-mono text-xs uppercase tracking-widest opacity-70">
-                  {t.a} — {t.c}
-                </figcaption>
-              </figure>
+            {testimonials.map((t, i) => (
+              <Reveal key={t.c} delay={i * 120}>
+                <figure className="border-l-2 border-accent pl-6">
+                  <blockquote className="text-xl leading-relaxed">“{t.q}”</blockquote>
+                  <figcaption className="mt-4 font-mono text-xs uppercase tracking-widest opacity-70">
+                    {t.a} — {t.c}
+                  </figcaption>
+                </figure>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
       <section id="contact" className="mx-auto max-w-6xl px-6 py-24">
-        <Label n="05">Contact</Label>
-        <h2 className="mt-3 font-display text-5xl font-black md:text-7xl">Let's build your next estimate.</h2>
+        <Reveal>
+          <Label n="05">Contact</Label>
+          <h2 className="mt-3 font-display text-5xl font-black md:text-7xl">Let's build your next estimate.</h2>
+        </Reveal>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {[
             { k: "Email", v: "flxmnchr@gmail.com", h: "mailto:flxmnchr@gmail.com" },
             { k: "Phone", v: "+63 935 209 3565", h: "tel:+639352093565" },
             { k: "Location", v: "Lucena City, Philippines" },
-          ].map((c) => (
-            <div key={c.k} className="rounded border bg-card p-6">
-              <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">{c.k}</p>
-              {c.h ? (
-                <a href={c.h} className="mt-2 block text-lg font-bold hover:text-primary">{c.v}</a>
-              ) : (
-                <p className="mt-2 text-lg font-bold">{c.v}</p>
-              )}
-            </div>
+          ].map((c, i) => (
+            <Reveal key={c.k} delay={i * 80}>
+              <div className="rounded border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-md active:scale-[0.97]">
+                <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">{c.k}</p>
+                {c.h ? (
+                  <a href={c.h} className="mt-2 block text-lg font-bold transition-colors hover:text-primary">{c.v}</a>
+                ) : (
+                  <p className="mt-2 text-lg font-bold">{c.v}</p>
+                )}
+              </div>
+            </Reveal>
           ))}
         </div>
       </section>
@@ -203,7 +285,7 @@ function Index() {
       <footer className="border-t">
         <div className="mx-auto flex max-w-6xl justify-between px-6 py-6 font-mono text-xs text-muted-foreground">
           <span>© 2026 Felix Nathaniel U. Menchero</span>
-          <a href="#top" className="hover:text-primary">Back to top ↑</a>
+          <a href="#top" className="transition-colors hover:text-primary">Back to top ↑</a>
         </div>
       </footer>
     </div>
