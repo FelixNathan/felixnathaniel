@@ -359,7 +359,7 @@ function Index() {
                     <dl className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded border bg-border">
                       {s.stats.map((st) => (
                         <div key={st.k} className="bg-card p-4">
-                          <dt className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                          <dt className="text-[11px] font-medium uppercase tracking-widest text-foreground/70">
                             {st.k}
                           </dt>
                           <dd className="mt-1 font-display text-xl font-black text-primary">{st.v}</dd>
