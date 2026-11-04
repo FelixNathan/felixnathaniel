@@ -1,6 +1,10 @@
 import { createFileRoute, useHydrated } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import headshot from "@/assets/felix-headshot.png.asset.json";
+import petronisPlan from "@/assets/petronis-site-plan-takeoff.jpg.asset.json";
+import petronisPdf from "@/assets/petronis-site-plan-takeoff.pdf.asset.json";
+import dogBoq from "@/assets/dog-house-boq-comparison.jpg.asset.json";
+import dogXlsx from "@/assets/dog-house-boq-comparison.xlsx.asset.json";
 
 const title = "Felix Menchero — Estimator & Quantity Surveyor";
 const desc =
@@ -44,6 +48,41 @@ const jobs = [
 const works = [
   { t: "Uptown Modern Facial Mirror & Shower Enclosure", p: "Jan 2026 — Ongoing", v: "$572,803.30", d: "Comprehensive estimate covering labor, materials and contingencies. Takeoffs via Bluebeam, Planswift and AutoCAD with the Design & Construction Manager." },
   { t: "Mandaluyong Steel Railing", p: "Mar 2026 — May 2026", v: "$252,033.45", d: "Estimate covering labor, materials and consumables, with takeoffs verified against design intent." },
+];
+
+const samples = [
+  {
+    t: "Petronis Residence — Site Plan Quantity Takeoff",
+    kind: "Quantity Takeoff",
+    meta: "Gaines Bend, Palo Pinto County, Texas · Sheet A-3",
+    alt: "Marked-up residential site plan with quantity takeoff annotations",
+    d: "Digital markup takeoff of a 28,684 SF residential lot for a custom-home builder: hardscape areas by type, the impervious/pervious split for drainage review, and total retaining wall length — issued on the architect's site plan with a review block for the contractor.",
+    img: petronisPlan,
+    file: petronisPdf,
+    open: "Open marked-up site plan (PDF)",
+    stats: [
+      { k: "Building footprint", v: "5,640 SF" },
+      { k: "Total site area", v: "28,684 SF" },
+      { k: "Impervious cover", v: "31.9%" },
+      { k: "Retaining wall", v: "547.9 LF" },
+    ],
+  },
+  {
+    t: "Small Dog House — BOQ & Supplier Comparison",
+    kind: "Bill of Quantities",
+    meta: "Honolulu, Hawaii, USA · USD",
+    alt: "Bill of quantities spreadsheet comparing two suppliers",
+    d: "Fourteen-line bill of quantities with per-item waste allowances, priced side by side against two suppliers, with an editable tax rate and a written estimating basis covering assumptions, exclusions and procurement recommendations.",
+    img: dogBoq,
+    file: dogXlsx,
+    open: "Open workbook (XLSX)",
+    stats: [
+      { k: "Line items", v: "14" },
+      { k: "Supplier A total", v: "$490.00" },
+      { k: "Supplier B total", v: "$473.58" },
+      { k: "Modelled saving", v: "$16.42" },
+    ],
+  },
 ];
 
 const testimonials = [
@@ -283,6 +322,65 @@ function Index() {
               </article>
             </Reveal>
           ))}
+        </div>
+
+        <div className="mt-24">
+          <Reveal>
+            <p className="font-mono text-xs uppercase tracking-[0.2em] text-primary">Sample works</p>
+            <h3 className="mt-3 font-display text-3xl font-black md:text-4xl">Real deliverables you can open</h3>
+            <p className="mt-4 max-w-2xl text-muted-foreground">
+              Two work products I have actually issued — a marked-up site plan takeoff and a priced bill of
+              quantities. Click either file to review it in full.
+            </p>
+          </Reveal>
+          <div className="mt-10 space-y-8">
+            {samples.map((s, i) => (
+              <Reveal key={s.t} delay={i * 100}>
+                <article className="overflow-hidden rounded border bg-card transition-all duration-300 hover:shadow-lg md:grid md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+                  <a
+                    href={s.file.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Open ${s.t}`}
+                    className="block border-b bg-secondary/50 p-4 transition-colors hover:bg-secondary md:border-b-0 md:border-r"
+                  >
+                    <img
+                      src={s.img.url}
+                      alt={s.alt}
+                      loading="lazy"
+                      className="w-full rounded border bg-background object-cover"
+                    />
+                  </a>
+                  <div className="flex h-full flex-col p-8">
+                    <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent">{s.kind}</p>
+                    <h4 className="mt-3 text-2xl font-bold leading-tight">{s.t}</h4>
+                    <p className="mt-1 font-mono text-xs text-muted-foreground">{s.meta}</p>
+                    <p className="mt-4 text-muted-foreground">{s.d}</p>
+                    <dl className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded border bg-border">
+                      {s.stats.map((st) => (
+                        <div key={st.k} className="bg-card p-4">
+                          <dt className="text-[11px] font-medium uppercase tracking-widest text-foreground/70">
+                            {st.k}
+                          </dt>
+                          <dd className="mt-1 font-display text-xl font-black text-primary">{st.v}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                    <div className="mt-auto pt-6">
+                      <a
+                        href={s.file.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block rounded bg-primary px-5 py-2.5 font-medium text-primary-foreground transition-all hover:opacity-90 active:scale-95"
+                      >
+                        {s.open}
+                      </a>
+                    </div>
+                  </div>
+                </article>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
